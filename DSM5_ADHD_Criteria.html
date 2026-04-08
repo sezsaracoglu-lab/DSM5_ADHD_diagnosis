@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSM-5 ADHD — Diagnostic Criteria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --surface: #1a1916;
+    --surface2: #222018;
+    --surface3: #2a2824;
+    --gold: #c9a96e;
+    --gold-dim: #9a7d4e;
+    --gold-bright: #e2c285;
+    --text: #e8e0d0;
+    --text-muted: #8a8070;
+    --text-dim: #5a5448;
+    --green: #7aab6e;
+    --green-bg: rgba(122,171,110,0.12);
+    --red: #c97070;
+    --red-bg: rgba(201,112,112,0.12);
+    --amber: #c9a96e;
+    --blue: #6e9ac9;
+    --blue-bg: rgba(110,154,201,0.12);
+    --border: rgba(201,169,110,0.18);
+    --border-dim: rgba(201,169,110,0.08);
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: linear-gradient(180deg, #1a1916 0%, #0f0e0c 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px 22px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold);
+    letter-spacing: 0.01em;
+  }
+  .header h1 span {
+    font-style: italic;
+    color: var(--gold-dim);
+    font-size: 15px;
+    font-weight: 400;
+  }
+  .header-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 7px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .btn:hover { background: rgba(201,169,110,0.1); border-color: var(--gold); }
+  .btn-primary { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
+  .btn-primary:hover { background: var(--gold-bright); }
+
+  /* ─── SCORE BAR ─── */
+  .score-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .score-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface);
+    border: 1px solid var(--border-dim);
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 12px;
+  }
+  .score-pill .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .score-pill .label { color: var(--text-muted); }
+  .score-pill.met { border-color: rgba(122,171,110,0.4); background: var(--green-bg); }
+  .score-pill.met .num { color: var(--green); }
+  .score-pill.unmet { border-color: rgba(201,112,112,0.3); }
+  .score-pill.unmet .num { color: var(--red); }
+
+  /* ─── VERDICT BANNER ─── */
+  .verdict {
+    margin: 12px 32px 0;
+    padding: 11px 16px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 500;
+    display: none;
+    border: 1px solid transparent;
+    animation: fadeIn 0.3s ease;
+  }
+  .verdict.show { display: block; }
+  .verdict.positive {
+    background: var(--green-bg);
+    border-color: rgba(122,171,110,0.35);
+    color: var(--green);
+  }
+  .verdict.partial {
+    background: rgba(201,169,110,0.08);
+    border-color: rgba(201,169,110,0.3);
+    color: var(--gold);
+  }
+  .verdict.negative {
+    background: var(--red-bg);
+    border-color: rgba(201,112,112,0.3);
+    color: var(--red);
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border-dim);
+    background: var(--bg);
+    position: sticky;
+    top: 120px;
+    z-index: 90;
+  }
+  .tab {
+    padding: 13px 18px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ─── MAIN CONTENT ─── */
+  .main { padding: 24px 32px 48px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+
+  /* ─── SECTION HEADINGS ─── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-dim);
+  }
+
+  /* ─── CRITERIA THRESHOLD CARD ─── */
+  .threshold-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .threshold-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .threshold-item strong { color: var(--gold); }
+  .threshold-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-dim); }
+
+  /* ─── SYMPTOM CLUSTER ─── */
+  .cluster {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .cluster-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .cluster-header:hover { background: rgba(201,169,110,0.04); }
+  .cluster-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cluster-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .cluster-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+  }
+  .cluster-badge {
+    background: var(--surface3);
+    border: 1px solid var(--border-dim);
+    border-radius: 12px;
+    padding: 3px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .cluster-badge.met {
+    background: var(--green-bg);
+    border-color: rgba(122,171,110,0.4);
+    color: var(--green);
+  }
+  .cluster-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .icon-inattention { background: rgba(110,154,201,0.15); }
+  .icon-hyperactivity { background: rgba(201,112,112,0.15); }
+  .icon-additional { background: rgba(201,169,110,0.12); }
+
+  .cluster-body { padding: 4px 18px 16px; }
+
+  /* ─── SYMPTOM ITEMS ─── */
+  .symptom-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 2px;
+  }
+  .symptom-item:hover { background: rgba(201,169,110,0.05); }
+  .symptom-item.checked { background: rgba(201,169,110,0.08); }
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--text-dim);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: transparent;
+  }
+  .symptom-item.checked .checkbox {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .checkbox-mark {
+    opacity: 0;
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 700;
+    transition: opacity 0.15s;
+  }
+  .symptom-item.checked .checkbox-mark { opacity: 1; }
+  .symptom-text { flex: 1; color: var(--text); font-size: 13.5px; }
+  .symptom-item.checked .symptom-text { color: var(--gold); }
+  .symptom-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ─── ADDITIONAL CRITERIA ─── */
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 600px) { .criteria-grid { grid-template-columns: 1fr; } }
+
+  .criteria-card {
+    background: var(--surface);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .criteria-card:hover { border-color: var(--border); background: var(--surface2); }
+  .criteria-card.checked {
+    border-color: rgba(122,171,110,0.4);
+    background: var(--green-bg);
+  }
+  .criteria-card.exclusion.checked {
+    border-color: rgba(201,112,112,0.4);
+    background: var(--red-bg);
+  }
+  .criteria-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .criteria-letter {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+    font-family: 'Playfair Display', serif;
+  }
+  .criteria-card.checked .criteria-letter { background: var(--green-bg); border-color: rgba(122,171,110,0.5); color: var(--green); }
+  .criteria-card.exclusion.checked .criteria-letter { background: var(--red-bg); border-color: rgba(201,112,112,0.5); color: var(--red); }
+  .criteria-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .criteria-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ─── PRESENTATION RESULT ─── */
+  .presentation-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+  .presentation-result h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .presentation-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 550px) { .presentation-grid { grid-template-columns: 1fr; } }
+
+  .pres-card {
+    border: 1.5px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .pres-card.active {
+    border-color: var(--gold);
+    background: rgba(201,169,110,0.1);
+  }
+  .pres-card .pres-code {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .pres-card .pres-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .pres-card .pres-req {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .pres-card.active .pres-code { color: var(--gold); }
+  .pres-card.active .pres-name { color: var(--gold-bright); }
+  .pres-card.active .pres-req { color: var(--gold-dim); }
+
+  /* ─── TREATMENT ─── */
+  .treatment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 600px) { .treatment-grid { grid-template-columns: 1fr; } }
+
+  .tx-card {
+    background: var(--surface);
+    border: 1px solid var(--border-dim);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .tx-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .tx-header:hover { background: rgba(201,169,110,0.04); }
+  .tx-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .tx-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .tx-type {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .tx-chevron {
+    margin-left: auto;
+    color: var(--text-dim);
+    font-size: 11px;
+    transition: transform 0.2s;
+  }
+  .tx-card.open .tx-chevron { transform: rotate(180deg); }
+  .tx-body { display: none; padding: 14px 16px; }
+  .tx-card.open .tx-body { display: block; animation: fadeIn 0.2s ease; }
+
+  .tx-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-right: 6px;
+    margin-bottom: 8px;
+  }
+  .tag-first { background: rgba(122,171,110,0.15); color: var(--green); border: 1px solid rgba(122,171,110,0.3); }
+  .tag-second { background: rgba(201,169,110,0.12); color: var(--gold); border: 1px solid rgba(201,169,110,0.3); }
+  .tag-psychosocial { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(110,154,201,0.3); }
+  .tag-warning { background: var(--red-bg); color: var(--red); border: 1px solid rgba(201,112,112,0.3); }
+
+  .tx-list {
+    list-style: none;
+    margin-top: 10px;
+  }
+  .tx-list li {
+    padding: 5px 0;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-dim);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .tx-list li:last-child { border-bottom: none; }
+  .tx-list li::before { content: '—'; color: var(--gold-dim); flex-shrink: 0; }
+
+  .tx-note {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-dim);
+    line-height: 1.6;
+  }
+
+  /* ─── MTA STUDY BOX ─── */
+  .mta-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 18px;
+    margin: 16px 0;
+  }
+  .mta-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .mta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  @media (max-width: 500px) { .mta-grid { grid-template-columns: 1fr; } }
+  .mta-cell {
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .mta-cell strong { display: block; color: var(--gold-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+
+  /* ─── COGNITIVE TESTS ─── */
+  .test-item {
+    background: var(--surface);
+    border: 1px solid var(--border-dim);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .test-header {
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .test-header:hover { background: rgba(201,169,110,0.04); }
+  .test-abbr {
+    background: rgba(201,169,110,0.12);
+    border: 1px solid rgba(201,169,110,0.25);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  .test-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .test-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+  .test-chevron { margin-left: auto; color: var(--text-dim); font-size: 11px; transition: transform 0.2s; }
+  .test-item.open .test-chevron { transform: rotate(180deg); }
+  .test-body { display: none; padding: 0 16px 14px; animation: fadeIn 0.2s ease; }
+  .test-item.open .test-body { display: block; }
+  .test-body p { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+  .test-result {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid rgba(201,112,112,0.3);
+  }
+
+  /* ─── FOOTER NOTE ─── */
+  .footer-note {
+    background: var(--surface);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+  .footer-note strong { color: var(--text-muted); }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border-dim); margin: 20px 0; }
+
+  .adult-note {
+    background: rgba(110,154,201,0.08);
+    border: 1px solid rgba(110,154,201,0.25);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 12px;
+    color: #8ab4d4;
+    margin-bottom: 14px;
+  }
+
+  .toggle-adult {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    user-select: none;
+    width: fit-content;
+  }
+  .toggle-track {
+    width: 34px; height: 18px;
+    background: var(--surface3);
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .toggle-adult.on .toggle-track { background: rgba(110,154,201,0.35); border-color: rgba(110,154,201,0.5); }
+  .toggle-knob {
+    width: 12px; height: 12px;
+    background: var(--text-dim);
+    border-radius: 50%;
+    position: absolute;
+    top: 2px; left: 2px;
+    transition: left 0.2s, background 0.2s;
+  }
+  .toggle-adult.on .toggle-knob { left: 18px; background: var(--blue); }
+  .toggle-label { font-size: 12px; color: var(--text-muted); }
+  .toggle-adult.on .toggle-label { color: var(--blue); }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>DSM-5 ADHD <span>— Diagnostic Criteria</span></h1>
+      <div class="header-meta">DSM-5-TR · APA 2022 · Davey (2021) Ch. 16 · Oltmanns &amp; Emery · Clinical Reference</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn" onclick="clearAll()">Clear All</button>
+      <button class="btn btn-primary" onclick="window.print()">Print / PDF</button>
+    </div>
+  </div>
+  <div class="score-bar">
+    <div class="score-pill" id="pillA">
+      <span class="num" id="scoreA">0</span><span class="label">/ <span id="threshA">6</span> Inattention</span>
+    </div>
+    <div class="score-pill" id="pillB">
+      <span class="num" id="scoreB">0</span><span class="label">/ <span id="threshB">6</span> Hyperactivity–Impulsivity</span>
+    </div>
+    <div class="score-pill" id="pillC">
+      <span class="num" id="scoreMeta">0</span><span class="label">/ 4 Additional Criteria</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── VERDICT BANNER ─── -->
+<div class="verdict" id="verdictBanner"></div>
+
+<!-- ─── TABS ─── -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('criteria', this)">Criteria Checklist</button>
+  <button class="tab" onclick="switchTab('treatment', this)">Treatment</button>
+  <button class="tab" onclick="switchTab('tests', this)">Cognitive Tests</button>
+</div>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+
+  <!-- ══════════════ TAB: CRITERIA ══════════════ -->
+  <div class="tab-content active" id="tab-criteria">
+
+    <!-- Adult toggle -->
+    <div class="toggle-adult" id="adultToggle" onclick="toggleAdult()">
+      <div class="toggle-track"><div class="toggle-knob"></div></div>
+      <span class="toggle-label">Adult mode (≥17 yrs — threshold: 5 symptoms)</span>
+    </div>
+
+    <div class="adult-note" id="adultNote" style="display:none;">
+      <strong>Adult ADHD:</strong> DSM-5 requires only <strong>5</strong> symptoms (vs 6 for children) for each cluster. Hyperactivity typically attenuates; inattention often persists. Symptom onset must still be traceable to before age 12.
+    </div>
+
+    <!-- Threshold card -->
+    <div class="threshold-card">
+      <div class="threshold-item"><div class="dot"></div><strong>≥6</strong> symptoms per cluster (≥5 for adults 17+)</div>
+      <div class="threshold-item"><div class="dot"></div>Persisting for <strong>≥6 months</strong></div>
+      <div class="threshold-item"><div class="dot"></div>Developmentally <strong>inappropriate</strong></div>
+      <div class="threshold-item"><div class="dot"></div>Present in <strong>≥2 settings</strong></div>
+      <div class="threshold-item"><div class="dot"></div>Onset before <strong>age 12</strong></div>
+    </div>
+
+    <!-- ─ CLUSTER A: INATTENTION ─ -->
+    <div class="cluster" id="clusterA">
+      <div class="cluster-header" onclick="toggleCluster('bodyA', this)">
+        <div class="cluster-header-left">
+          <div class="cluster-icon icon-inattention">🎯</div>
+          <div>
+            <div class="cluster-label">A — Inattention</div>
+            <div class="cluster-sub">At least 6 of 9 for ≥6 months (5 for adults)</div>
+          </div>
+        </div>
+        <div class="cluster-badge" id="badgeA">0 / 9</div>
+      </div>
+      <div class="cluster-body" id="bodyA">
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often fails to give close attention to details or makes careless mistakes</div>
+            <div class="symptom-note">in schoolwork, work, or other activities</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often has difficulty sustaining attention in tasks or play</div>
+            <div class="symptom-note">e.g., lectures, conversations, lengthy reading</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often does not seem to listen when spoken to directly</div>
+            <div class="symptom-note">mind appears elsewhere even without obvious distraction</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often does not follow through on instructions; fails to finish tasks</div>
+            <div class="symptom-note">starts tasks but quickly loses focus; not due to oppositional behaviour</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often has difficulty organising tasks and activities</div>
+            <div class="symptom-note">difficulty managing sequential tasks, keeping materials in order, time management</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often avoids or is reluctant to engage in tasks requiring sustained mental effort</div>
+            <div class="symptom-note">schoolwork, homework, reports, completing forms</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often loses things necessary for tasks or activities</div>
+            <div class="symptom-note">school materials, pencils, books, keys, wallet, phone</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Is often easily distracted by extraneous stimuli</div>
+            <div class="symptom-note">for older adolescents and adults: may include unrelated thoughts</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'a')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Is often forgetful in daily activities</div>
+            <div class="symptom-note">chores, errands; for older: returning calls, paying bills, keeping appointments</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ CLUSTER B: HYPERACTIVITY–IMPULSIVITY ─ -->
+    <div class="cluster" id="clusterB">
+      <div class="cluster-header" onclick="toggleCluster('bodyB', this)">
+        <div class="cluster-header-left">
+          <div class="cluster-icon icon-hyperactivity">⚡</div>
+          <div>
+            <div class="cluster-label">B — Hyperactivity &amp; Impulsivity</div>
+            <div class="cluster-sub">At least 6 of 9 for ≥6 months (5 for adults)</div>
+          </div>
+        </div>
+        <div class="cluster-badge" id="badgeB">0 / 9</div>
+      </div>
+      <div class="cluster-body" id="bodyB">
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often fidgets with or taps hands or feet, or squirms in seat</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often leaves seat in situations when remaining seated is expected</div>
+            <div class="symptom-note">classroom, workplace, or other settings</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often runs about or climbs in situations where it is inappropriate</div>
+            <div class="symptom-note">in adolescents/adults: may be limited to feelings of restlessness</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often unable to play or engage in leisure activities quietly</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Is often "on the go," acting as if "driven by a motor"</div>
+            <div class="symptom-note">cannot stay still for extended time; uncomfortable being still</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often talks excessively</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often blurts out an answer before a question has been completed</div>
+            <div class="symptom-note">in adolescents/adults: may complete others' sentences; cannot wait for turn</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often has difficulty waiting his or her turn</div>
+            <div class="symptom-note">while waiting in line, in conversations</div>
+          </div>
+        </div>
+        <div class="symptom-item" onclick="toggle(this,'b')">
+          <div class="checkbox"><span class="checkbox-mark">✓</span></div>
+          <div>
+            <div class="symptom-text">Often interrupts or intrudes on others</div>
+            <div class="symptom-note">butts into conversations, games, or activities; may use others' things without asking</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ ADDITIONAL CRITERIA C–F ─ -->
+    <div class="section-title" style="margin-top:20px;">Additional Required Criteria</div>
+    <div class="criteria-grid">
+
+      <div class="criteria-card" id="cardC" onclick="toggleCriteria('C')">
+        <div class="criteria-card-header">
+          <div class="criteria-letter">C</div>
+          <div class="criteria-name">Age of Onset</div>
+        </div>
+        <div class="criteria-desc">Several symptoms present <strong style="color:var(--text)">before age 12 years</strong></div>
+      </div>
+
+      <div class="criteria-card" id="cardD" onclick="toggleCriteria('D')">
+        <div class="criteria-card-header">
+          <div class="criteria-letter">D</div>
+          <div class="criteria-name">Cross-Setting</div>
+        </div>
+        <div class="criteria-desc">Symptoms present in <strong style="color:var(--text)">≥2 settings</strong> (home, school, work, social, other)</div>
+      </div>
+
+      <div class="criteria-card" id="cardE" onclick="toggleCriteria('E')">
+        <div class="criteria-card-header">
+          <div class="criteria-letter">E</div>
+          <div class="criteria-name">Functional Impairment</div>
+        </div>
+        <div class="criteria-desc">Clear evidence symptoms <strong style="color:var(--text)">reduce quality</strong> of social, academic, or occupational functioning</div>
+      </div>
+
+      <div class="criteria-card exclusion" id="cardF" onclick="toggleCriteria('F')">
+        <div class="criteria-card-header">
+          <div class="criteria-letter">F</div>
+          <div class="criteria-name">Exclusion ⚠</div>
+        </div>
+        <div class="criteria-desc">Symptoms <em>not</em> better explained by schizophrenia, other psychosis, or another mental disorder <span style="color:var(--red-dim)">(check to exclude)</span></div>
+      </div>
+
+    </div>
+
+    <!-- ─ PRESENTATION RESULT ─ -->
+    <div class="presentation-result">
+      <h3>DSM-5 Presentation Specifier</h3>
+      <div class="presentation-grid">
+        <div class="pres-card" id="presInattentive">
+          <div class="pres-code">314.00</div>
+          <div class="pres-name">Predominantly Inattentive</div>
+          <div class="pres-req">≥6 Inattention · &lt;6 H/I</div>
+        </div>
+        <div class="pres-card" id="presHyperactive">
+          <div class="pres-code">314.01</div>
+          <div class="pres-name">Predominantly Hyperactive–Impulsive</div>
+          <div class="pres-req">&lt;6 Inattention · ≥6 H/I</div>
+        </div>
+        <div class="pres-card" id="presCombined">
+          <div class="pres-code">314.01</div>
+          <div class="pres-name">Combined Presentation</div>
+          <div class="pres-req">≥6 Inattention AND ≥6 H/I</div>
+        </div>
+      </div>
+      <p style="font-size:11.5px;color:var(--text-dim);margin-top:12px;">
+        ⓘ DSM-5 uses "presentation" (not "subtype") to acknowledge that symptom profiles can shift over development. Severity (Mild / Moderate / Severe) is coded separately. Partial remission specifier available if full criteria not currently met.
+      </p>
+    </div>
+
+    <div class="footer-note">
+      <strong>Clinical note:</strong> DSM-5 ADHD diagnosis requires clinical judgment and multi-informant information gathering (e.g., parent + teacher ratings, clinical interview). Rating scales such as the <strong>Conners' Parent Rating Scale (CPRS)</strong> complement but do not replace clinical assessment. Rule out vision/hearing problems, anxiety, depression, learning disorders, and intellectual disability before diagnosing ADHD.
+    </div>
+
+  </div>
+
+  <!-- ══════════════ TAB: TREATMENT ══════════════ -->
+  <div class="tab-content" id="tab-treatment">
+
+    <div class="section-title">Pharmacological Treatments</div>
+    <div class="treatment-grid">
+
+      <div class="tx-card" onclick="toggleTx(this)">
+        <div class="tx-header">
+          <div class="tx-icon" style="background:rgba(122,171,110,0.15);">💊</div>
+          <div>
+            <div class="tx-title">Psychostimulants</div>
+            <div class="tx-type">Methylphenidate (Ritalin) · Dexedrine · Adderall</div>
+          </div>
+          <div class="tx-chevron">▼</div>
+        </div>
+        <div class="tx-body">
+          <span class="tx-tag tag-first">First-Line</span>
+          <p style="font-size:12.5px;color:var(--text-muted);line-height:1.65;">Psychostimulants increase <strong style="color:var(--text)">dopamine and norepinephrine</strong> availability in synaptic clefts by blocking reuptake transporters. They address neurobiological deficits in prefrontal attentional circuits. Effective in approximately <strong style="color:var(--text)">75% of children</strong>.</p>
+          <ul class="tx-list">
+            <li>Short-acting: effects last 3–4 hours; often taken morning ± midday</li>
+            <li>Extended-release formulations available</li>
+            <li>Typically not taken on weekends/holidays ("drug holidays")</li>
+            <li>Produces immediate, noticeable behavioural improvement short-term</li>
+            <li>8-year MTA follow-up: <strong style="color:var(--text)">no long-term benefit demonstrated</strong></li>
+          </ul>
+          <div class="tx-note">⚠ The "paradoxical effect" myth — psychostimulants produce identical effects in neurotypical children and adults (NIMH research). Effect is universal, not ADHD-specific.</div>
+        </div>
+      </div>
+
+      <div class="tx-card" onclick="toggleTx(this)">
+        <div class="tx-header">
+          <div class="tx-icon" style="background:rgba(201,112,112,0.15);">⚠️</div>
+          <div>
+            <div class="tx-title">Side Effects of Stimulants</div>
+            <div class="tx-type">Growth suppression · Appetite · Sleep</div>
+          </div>
+          <div class="tx-chevron">▼</div>
+        </div>
+        <div class="tx-body">
+          <span class="tx-tag tag-warning">Monitor Closely</span>
+          <ul class="tx-list">
+            <li><strong style="color:var(--text)">Decreased appetite</strong> — contributes to growth suppression</li>
+            <li><strong style="color:var(--text)">Growth suppression</strong> — MTA: 6 lbs less weight + 0.8 inches less height over 3 years</li>
+            <li>Sleeping difficulties / sleep-onset delay</li>
+            <li>Increased heart rate / mild cardiovascular effects</li>
+            <li>Motor tics in a small percentage of children</li>
+            <li>Abuse potential (especially adolescents); up to 35% of college students misuse</li>
+          </ul>
+          <div class="tx-note">Drug holidays (weekends/school breaks) recommended to allow growth recovery. Weigh benefits of symptom control against physical growth costs.</div>
+        </div>
+      </div>
+
+      <div class="tx-card" onclick="toggleTx(this)">
+        <div class="tx-header">
+          <div class="tx-icon" style="background:rgba(110,154,201,0.15);">🔵</div>
+          <div>
+            <div class="tx-title">Strattera (Atomoxetine)</div>
+            <div class="tx-type">Non-stimulant · Norepinephrine Reuptake Inhibitor</div>
+          </div>
+          <div class="tx-chevron">▼</div>
+        </div>
+        <div class="tx-body">
+          <span class="tx-tag tag-second">Second-Line</span>
+          <p style="font-size:12.5px;color:var(--text-muted);line-height:1.65;">Only FDA-approved non-stimulant for ADHD. Preferred when stimulant abuse is a concern (adults, adolescents, history of substance use).</p>
+          <ul class="tx-list">
+            <li>Less effective than psychostimulants overall</li>
+            <li>Lower abuse potential — important in university settings</li>
+            <li><strong style="color:var(--red);">Serious risk of increased suicidal ideation</strong></li>
+            <li>Clonidine (blood pressure med): used adjunctively; reduces aggression; rare sudden death reports</li>
+            <li>Antidepressants: second-line only when stimulants have failed</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MTA Box -->
+    <div class="mta-box">
+      <h4>📊 MTA Study — Multimodal Treatment of ADHD (n = 579)</h4>
+      <p style="font-size:12.5px;color:var(--text-muted);">Largest ADHD treatment RCT. Children randomly assigned to 4 conditions; assessed at 14 months and 8-year follow-up.</p>
+      <div class="mta-grid">
+        <div class="mta-cell"><strong>Condition 1</strong>Controlled medication management</div>
+        <div class="mta-cell"><strong>Condition 2</strong>Intensive behaviour therapy</div>
+        <div class="mta-cell"><strong>Condition 3</strong>Combined (med + behaviour)</div>
+        <div class="mta-cell"><strong>Condition 4</strong>Community care (control)</div>
+      </div>
+      <ul class="tx-list" style="margin-top:12px;">
+        <li><strong style="color:var(--text);">14 months:</strong> Controlled medication and combined treatment superior to behaviour therapy alone and community care</li>
+        <li>Intensive behaviour therapy alone: only marginal benefit over medication</li>
+        <li>Community care (even with unmonitored medication): significantly less effective — medication without monitoring is insufficient</li>
+        <li><strong style="color:var(--text);">8-year follow-up:</strong> No long-term benefit of either treatment — a major unresolved puzzle in ADHD research</li>
+      </ul>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">Psychosocial Treatments</div>
+    <div class="treatment-grid">
+
+      <div class="tx-card" onclick="toggleTx(this)">
+        <div class="tx-header">
+          <div class="tx-icon" style="background:rgba(110,154,201,0.15);">🎓</div>
+          <div>
+            <div class="tx-title">Behaviour Therapy</div>
+            <div class="tx-type">Selective reinforcement · Time-out · Classroom management</div>
+          </div>
+          <div class="tx-chevron">▼</div>
+        </div>
+        <div class="tx-body">
+          <span class="tx-tag tag-psychosocial">Psychosocial</span>
+          <ul class="tx-list">
+            <li>Reinforce <strong style="color:var(--text);">on-task behaviours</strong>: pausing before task, appropriate peer communication</li>
+            <li><strong style="color:var(--text);">Time-out from positive reinforcement</strong>: 5–15 min in quiet chair removes attention as reinforcer</li>
+            <li>Reduces aggressiveness, non-compliance, and property destruction</li>
+            <li>Selective reinforcement facilitates academic achievement</li>
+            <li>Most effective when combined with reinforcement of incompatible prosocial behaviours</li>
+            <li>MTA: less effective than medication alone short-term; may have advantages in some domains long-term</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tx-card" onclick="toggleTx(this)">
+        <div class="tx-header">
+          <div class="tx-icon" style="background:rgba(110,154,201,0.15);">👨‍👩‍👧</div>
+          <div>
+            <div class="tx-title">Behavioural Family Therapy (BFT)</div>
+            <div class="tx-type">Parent training · Star charts · Daily report cards</div>
+          </div>
+          <div class="tx-chevron">▼</div>
+        </div>
+        <div class="tx-body">
+          <span class="tx-tag tag-psychosocial">Psychosocial</span>
+          <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:8px;">Teaches parents to: specify behavioural expectations clearly, monitor closely, systematically reward positive behaviour, and ignore/mildly punish misbehaviour.</p>
+          <ul class="tx-list">
+            <li>Parent training: identify specific problem behaviours, set consistent consequences</li>
+            <li>Tools: star charts, daily report cards coordinating home-school discipline</li>
+            <li><strong style="color:var(--amber);">More effective for ODD than for ADHD specifically</strong> (MTA)</li>
+            <li>Long-term beneficial effects on antisocial behaviour</li>
+          </ul>
+          <div class="tx-note">BFT targets the reinforcement environment. ADHD has a neurobiological basis that BFT cannot directly address — hence it is adjunctive for ADHD but primary for ODD.</div>
+        </div>
+      </div>
+
+      <div class="tx-card" onclick="toggleTx(this)">
+        <div class="tx-header">
+          <div class="tx-icon" style="background:rgba(110,154,201,0.15);">🏛️</div>
+          <div>
+            <div class="tx-title">Family Interventions</div>
+            <div class="tx-type">Systemic · Functional Family Therapy (FFT)</div>
+          </div>
+          <div class="tx-chevron">▼</div>
+        </div>
+        <div class="tx-body">
+          <span class="tx-tag tag-psychosocial">Psychosocial</span>
+          <ul class="tx-list">
+            <li><strong style="color:var(--text);">Systemic family therapy:</strong> focuses on inappropriate family structures, communication patterns, parent-child boundaries (Minuchin)</li>
+            <li><strong style="color:var(--text);">Parent management training:</strong> teaches consistent reinforcement of acceptable behaviour; effective for conduct disorder</li>
+            <li><strong style="color:var(--text);">Functional Family Therapy (FFT):</strong> views problem behaviour as serving a regulatory function in the family; combines systemic therapy + CBT</li>
+            <li>Meta-analyses: positive effect over no treatment; methodological limitations prevent definitive conclusions</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tx-card" onclick="toggleTx(this)">
+        <div class="tx-header">
+          <div class="tx-icon" style="background:rgba(201,169,110,0.15);">🧠</div>
+          <div>
+            <div class="tx-title">CBT for ADHD-Related Problems</div>
+            <div class="tx-type">Adolescents · Secondary depression/anxiety · Comorbidity</div>
+          </div>
+          <div class="tx-chevron">▼</div>
+        </div>
+        <div class="tx-body">
+          <span class="tx-tag tag-psychosocial">Psychosocial</span>
+          <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:8px;">Primarily used with <strong style="color:var(--text);">adolescents</strong> (not young children — requires cognitive capacity to identify thoughts). Targets secondary consequences: depression and anxiety from chronic academic failure and peer rejection.</p>
+          <ul class="tx-list">
+            <li>Identifies pessimistic/negative automatic thoughts and self-blaming attributional patterns</li>
+            <li>Teaches client to challenge and replace dysfunctional cognitions with realistic ones</li>
+            <li>Increases engagement in positively reinforcing behaviours</li>
+            <li>Develops problem-solving, social interaction, and goal-setting skills</li>
+            <li>Parental involvement improves efficacy</li>
+          </ul>
+          <div class="tx-note">CBT addresses cognitive mediators of secondary depression/anxiety. Complements medication that targets primary ADHD symptoms.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-note">
+      <strong>Evidence-based recommendation (Davey, 2021):</strong> Combined treatment (controlled medication + behaviour therapy) produces the best overall outcomes. Medication alone produces strong short-term symptom reduction but no demonstrated long-term benefit. Psychostimulants remain first-line for core ADHD symptoms; psychosocial interventions are essential for comorbidities, family functioning, and long-term skill development. The absence of long-term medication benefit highlights the need for continued research and multimodal approaches.
+    </div>
+
+  </div>
+
+  <!-- ══════════════ TAB: COGNITIVE TESTS ══════════════ -->
+  <div class="tab-content" id="tab-tests">
+
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;line-height:1.65;">
+      A variety of tests can differentiate children with ADHD from control participants. Most assess <strong style="color:var(--text);">sustained attention</strong> or the ability to <strong style="color:var(--text);">inhibit responses</strong>. These are used as part of comprehensive neuropsychological assessment; no single test alone is diagnostic (see Seidman, 2006).
+    </p>
+
+    <div class="section-title">Neuropsychological Assessment Tools</div>
+
+    <div class="test-item" onclick="toggleTest(this)">
+      <div class="test-header">
+        <div class="test-abbr">CPT</div>
+        <div>
+          <div class="test-name">Continuous Performance Test</div>
+          <div class="test-desc">Computerised vigilance / sustained attention</div>
+        </div>
+        <div class="test-chevron">▼</div>
+      </div>
+      <div class="test-body">
+        <p>A computerised visual vigilance/attention task in which the child observes a string of letters presented randomly at varying speeds. Children must press the space bar following all letters <em>except</em> the letter X. Children with ADHD are less able to inhibit responses to the target letter X and show longer reaction times to letters that should be responded to (Epstein, Johnson, Varia &amp; Conners, 2001).</p>
+        <div class="test-result">ADHD finding: ↑ commission errors · ↑ reaction time · ↓ response inhibition</div>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="toggleTest(this)">
+      <div class="test-header">
+        <div class="test-abbr">Stroop</div>
+        <div>
+          <div class="test-name">Stroop Task</div>
+          <div class="test-desc">Response inhibition · Cognitive interference</div>
+        </div>
+        <div class="test-chevron">▼</div>
+      </div>
+      <div class="test-body">
+        <p>A test of the ability to inhibit prepotent responses. A colour word (e.g., RED) is printed in a different ink colour (e.g., green). The participant must name the ink colour while ignoring the word meaning. Children with ADHD take more time to respond and make more errors than control participants (Shin, 2005).</p>
+        <div class="test-result">ADHD finding: ↑ response time · ↑ error rate · ↓ inhibitory control</div>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="toggleTest(this)">
+      <div class="test-header">
+        <div class="test-abbr">TMT</div>
+        <div>
+          <div class="test-name">Trail Making Test</div>
+          <div class="test-desc">Executive functioning · Cognitive flexibility</div>
+        </div>
+        <div class="test-chevron">▼</div>
+      </div>
+      <div class="test-body">
+        <p>A measure involving connecting circles on a page (Reitan, 1958). The child connects circles by drawing lines alternating between circles labelled with numbers and letters in sequential order until reaching the circle labelled 'End'. Most studies show that children and adults with ADHD perform significantly worse than controls (Rapport, Van Voorhis, Tzelepis &amp; Friedman, 2001).</p>
+        <div class="test-result">ADHD finding: ↓ completion speed · ↑ errors · ↓ set-shifting ability</div>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="toggleTest(this)">
+      <div class="test-header">
+        <div class="test-abbr">COWAT</div>
+        <div>
+          <div class="test-name">Controlled Word Association Test</div>
+          <div class="test-desc">Verbal fluency · Phonological &amp; category fluency</div>
+        </div>
+        <div class="test-chevron">▼</div>
+      </div>
+      <div class="test-body">
+        <p>Measures verbal fluency in response to single letters, tapping into phonological associations and category fluency ("name all the animals you can beginning with the letter…"). Assesses speed of access to words, persistence at a task, and processing speed. The majority of studies show impaired performance in children with ADHD compared with controls (Dinn, Robbins &amp; Harris, 2001; Benton, Hamsher &amp; Sivan, 1983).</p>
+        <div class="test-result">ADHD finding: ↓ word output · ↓ persistence · ↓ processing speed</div>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="toggleTest(this)">
+      <div class="test-header">
+        <div class="test-abbr">CPRS</div>
+        <div>
+          <div class="test-name">Conners' Parent Rating Scale</div>
+          <div class="test-desc">Standardised parent-report · 80 items · 4-point scale</div>
+        </div>
+        <div class="test-chevron">▼</div>
+      </div>
+      <div class="test-body">
+        <p>An 80-item scale completed by the child's parent using a four-point rating scale (Conners, Sitarenios, Parker &amp; Epstein, 1998). Well-accepted reliability and validity; considered standard in ADHD diagnosis (Barkley, 1991). Norms by age are available for males and females in 3-year intervals.</p>
+        <div class="test-result">Clinical standard · Multi-informant · Normed for age and sex</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">Executive Functioning Framework</div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.65;margin-bottom:14px;">ADHD is fundamentally associated with <strong style="color:var(--text);">executive functioning (EF) deficits</strong> — the set of cognitive processes regulating goal-directed behaviour. EF deficits are neurologically linked to reduced frontal lobe volume and delayed cortical maturation.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+      <div style="background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 14px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-dim);margin-bottom:6px;">Response Inhibition</div>
+        <div style="font-size:12px;color:var(--text-muted);">Core EF deficit — inability to suppress prepotent, automatic, or impulsive responses</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 14px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-dim);margin-bottom:6px;">Working Memory</div>
+        <div style="font-size:12px;color:var(--text-muted);">Difficulty holding information in mind while performing other cognitive operations</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 14px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold-dim);margin-bottom:6px;">Cognitive Flexibility</div>
+        <div style="font-size:12px;color:var(--text-muted);">Impaired set-shifting; difficulty adapting responses when task demands change</div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <strong>Assessment note:</strong> No single cognitive test is sufficient for ADHD diagnosis. A comprehensive assessment combines: clinical interview, multi-informant rating scales (CPRS + teacher ratings), neuropsychological testing (CPT, Stroop, TMT), direct observation, developmental history, and medical evaluation. Differential diagnosis must exclude anxiety disorders, mood disorders, learning disabilities, sleep disorders, and giftedness.
+    </div>
+
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ─── STATE ───
+let adultMode = false;
+const metaCriteria = { C: false, D: false, E: false, F: false };
+
+// ─── ADULT MODE ───
+function toggleAdult() {
+  adultMode = !adultMode;
+  const tog = document.getElementById('adultToggle');
+  const note = document.getElementById('adultNote');
+  tog.classList.toggle('on', adultMode);
+  note.style.display = adultMode ? 'block' : 'none';
+
+  const thresh = adultMode ? 5 : 6;
+  document.getElementById('threshA').textContent = thresh;
+  document.getElementById('threshB').textContent = thresh;
+  document.querySelectorAll('.cluster-sub').forEach(el => {
+    el.textContent = `At least ${thresh} of 9 for ≥6 months (${adultMode ? 'adult threshold' : '5 for adults'})`;
+  });
+  updateScores();
+}
+
+// ─── SYMPTOM TOGGLE ───
+function toggle(el, cluster) {
+  el.classList.toggle('checked');
+  updateScores();
+}
+
+// ─── META CRITERIA ───
+function toggleCriteria(letter) {
+  metaCriteria[letter] = !metaCriteria[letter];
+  const card = document.getElementById('card' + letter);
+  card.classList.toggle('checked', metaCriteria[letter]);
+  updateScores();
+}
+
+// ─── SCORE UPDATE ───
+function updateScores() {
+  const thresh = adultMode ? 5 : 6;
+  const aItems = document.querySelectorAll('#bodyA .symptom-item.checked');
+  const bItems = document.querySelectorAll('#bodyB .symptom-item.checked');
+  const sA = aItems.length, sB = bItems.length;
+  const metaCount = Object.values(metaCriteria).filter((v, i) => i < 3 && v).length + (metaCriteria.F ? 1 : 0);
+  const metaRequired = Object.values(metaCriteria).filter((v, i) => [true, true, true].includes(v)).length;
+
+  // Update pills
+  document.getElementById('scoreA').textContent = sA;
+  document.getElementById('scoreB').textContent = sB;
+  document.getElementById('scoreMeta').textContent = Object.values(metaCriteria).filter(v => v).length;
+
+  // Badge colours
+  const pillA = document.getElementById('pillA');
+  const pillB = document.getElementById('pillB');
+  pillA.className = 'score-pill' + (sA >= thresh ? ' met' : '');
+  pillB.className = 'score-pill' + (sB >= thresh ? ' met' : '');
+
+  // Cluster badges
+  document.getElementById('badgeA').textContent = sA + ' / 9';
+  document.getElementById('badgeA').className = 'cluster-badge' + (sA >= thresh ? ' met' : '');
+  document.getElementById('badgeB').textContent = sB + ' / 9';
+  document.getElementById('badgeB').className = 'cluster-badge' + (sB >= thresh ? ' met' : '');
+
+  // Presentation specifier
+  const aMetThresh = sA >= thresh, bMetThresh = sB >= thresh;
+  document.getElementById('presInattentive').className = 'pres-card' + (aMetThresh && !bMetThresh ? ' active' : '');
+  document.getElementById('presHyperactive').className = 'pres-card' + (!aMetThresh && bMetThresh ? ' active' : '');
+  document.getElementById('presCombined').className = 'pres-card' + (aMetThresh && bMetThresh ? ' active' : '');
+
+  // Verdict
+  const verdict = document.getElementById('verdictBanner');
+  const allMeta = metaCriteria.C && metaCriteria.D && metaCriteria.E;
+  const excluded = metaCriteria.F;
+
+  if (excluded) {
+    verdict.className = 'verdict show negative';
+    verdict.innerHTML = '⛔ Criterion F: Symptoms better explained by another disorder — ADHD diagnosis excluded.';
+  } else if ((aMetThresh || bMetThresh) && allMeta) {
+    let pres = aMetThresh && bMetThresh ? 'Combined Presentation' : aMetThresh ? 'Predominantly Inattentive Presentation' : 'Predominantly Hyperactive–Impulsive Presentation';
+    verdict.className = 'verdict show positive';
+    verdict.innerHTML = `✓ DSM-5 criteria met — ADHD, <strong>${pres}</strong>. Confirm severity (Mild / Moderate / Severe) and document functional impairment across settings.`;
+  } else if (aMetThresh || bMetThresh) {
+    const missing = [];
+    if (!metaCriteria.C) missing.push('C (onset before 12)');
+    if (!metaCriteria.D) missing.push('D (cross-setting)');
+    if (!metaCriteria.E) missing.push('E (functional impairment)');
+    verdict.className = 'verdict show partial';
+    verdict.innerHTML = `⚠ Symptom threshold met but additional criteria incomplete: <strong>${missing.join(', ')}</strong>`;
+  } else if (sA > 0 || sB > 0) {
+    verdict.className = 'verdict show partial';
+    verdict.innerHTML = `⚠ Subthreshold symptoms: ${sA} inattention, ${sB} hyperactivity–impulsivity. Threshold is ${thresh} per cluster.`;
+  } else {
+    verdict.className = 'verdict';
+  }
+}
+
+// ─── CLUSTER COLLAPSE ───
+function toggleCluster(bodyId, headerEl) {
+  const body = document.getElementById(bodyId);
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+}
+
+// ─── TX CARD TOGGLE ───
+function toggleTx(card) {
+  card.classList.toggle('open');
+}
+
+// ─── TEST TOGGLE ───
+function toggleTest(item) {
+  item.classList.toggle('open');
+}
+
+// ─── CLEAR ───
+function clearAll() {
+  document.querySelectorAll('.symptom-item.checked').forEach(el => el.classList.remove('checked'));
+  ['C','D','E','F'].forEach(l => {
+    metaCriteria[l] = false;
+    document.getElementById('card'+l).classList.remove('checked');
+  });
+  updateScores();
+}
+
+// ─── TAB SWITCH ───
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+</script>
+</body>
+</html>
